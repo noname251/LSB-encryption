@@ -8,6 +8,7 @@ public class EncryptionAndDecryption {
         // 对于灰度图来说有多少个像素就能存储多少bits的数据
         // 长度验证
         int maxInfoBits = imageData.length/8;
+        System.out.println("当前信息字节数为:"+secretInfo.length);
         if(secretInfo.length > maxInfoBits){
             System.out.println("长度超出限制");
             return new byte[0];

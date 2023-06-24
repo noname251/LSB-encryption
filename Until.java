@@ -1,6 +1,4 @@
 public class Until {
-
-
     public static void printData(int width, int height, byte[] imageData){
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
