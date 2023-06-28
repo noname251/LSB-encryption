@@ -17,11 +17,17 @@ public class EncryptionAndDecryption {
 //        printByte(secretInfo);
         System.out.println('\n');
         // 将char中每个位的值与int的最后一位进行异或操作
-        for(int i=0; i<secretInfo.length; i++){
-            byte ch = secretInfo[i];
+        // 加密信息格式为 信息长度length + data
+        for(int i=-1; i<secretInfo.length; i++){
+            byte ch;
+            if(i == -1){
+                ch = (byte)secretInfo.length;
+            }else {
+                ch = secretInfo[i];
+            }
             for (int j = 0; j < 8; j++) {
                 byte bitValue = (byte) ((ch >> j) & 1);
-                encryptData[i*8+j] = (byte) (bitValue ^ imageData[i*8+j]);
+                encryptData[(i+1)*8+j] = (byte) (bitValue ^ imageData[(i+1)*8+j]);
             }
         }
         return encryptData;
@@ -30,20 +36,21 @@ public class EncryptionAndDecryption {
         byte[] secretInfo = new byte[encryptImageData.length/8];
         int secretLength = 0;
         Arrays.fill(secretInfo, (byte) 0);
-        for(int i=0;i<secretInfo.length;i++){
+        // 先获取加密信息长度，然后获取信息
+        for(int j=0; j<8; j++){
+            int temp = originImageData[j] ^ encryptImageData[j];
+            secretLength |= (temp) << j;
+        }
+        // 获取加密信息
+        for(int i=0;i<secretLength;i++){
             byte info = 0;
             for(int j=0; j<8; j++){
-                int temp = originImageData[i*8+j] ^ encryptImageData[i*8+j];
+                int temp = originImageData[(i+1)*8+j] ^ encryptImageData[(i+1)*8+j];
                 info |= (temp) << j;
             }
-            // 如果全都相同说明不是加密信息
-            if(info != 0){
-                secretLength++;
-                secretInfo[i] = info;
-            }
+            secretInfo[i] = info;
         }
         secretInfo = Arrays.copyOfRange(secretInfo, 0, secretLength);
-//        printByte(secretInfo);
         return secretInfo;
     }
 }
