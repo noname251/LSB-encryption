@@ -7,14 +7,14 @@ public class BMPImage {
     private int bitsPerPixel;
     private byte[] header;
     private byte[] body;
-    private byte[] data;
+    private byte[] tail;
 
     public BMPImage(int width, int height, int bitsPerPixel,byte[] header, byte[] data, byte[] body) {
         this.width = width;
         this.height = height;
         this.bitsPerPixel = bitsPerPixel;
         this.header = header;
-        this.data = data;
+        this.tail = data;
         this.body = body;
     }
 
@@ -31,7 +31,7 @@ public class BMPImage {
     }
 
     public byte[] getData() {
-        return data;
+        return tail;
     }
 
     public byte[] getHeader(){
@@ -43,7 +43,7 @@ public class BMPImage {
     }
 
     public void setData(byte[] data){
-        this.data = data;
+        this.tail = data;
     }
 
     public static BMPImage readBMP(String filename) {
@@ -54,7 +54,7 @@ public class BMPImage {
             // 解析BMP文件头
             int width = byteArrayToInt(header, 18, 4);
             int height = byteArrayToInt(header, 22, 4);
-            //biBitCount 用来判断是
+            //biBitCount 用来判断是灰度图还是全彩图
             int bitsPerPixel = byteArrayToInt(header, 28, 2);
 
             // 计算每行像素的字节数， 这样可以处理不仅仅是灰度图和全彩图， 妙啊
