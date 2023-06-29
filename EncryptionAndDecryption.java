@@ -119,7 +119,7 @@ public class EncryptionAndDecryption {
             secretLengthBytes[i] = info;
         }
         secretLength = Until.bytesToInt(secretLengthBytes);
-        System.out.println(secretLength);
+        System.out.println("解密信息字节数为："+secretLength);
         byte[] secretInfo = new byte[secretLength+2];
         Arrays.fill(secretInfo, (byte) 0);
         // 生成随机序列

@@ -24,7 +24,7 @@ public class test {
         BMPImage originImage = BMPImage.readBMP(filename);
         // 解密图片信息并打印
         if(encryptImage != null && originImage != null){
-            System.out.println('\n'+Until.byteToString(EncryptionAndDecryption.decrypt8(originImage.getData(), encryptImage.getData(), 113)));
+            System.out.println('\n'+"解密信息为："+Until.byteToString(EncryptionAndDecryption.decrypt8(originImage.getData(), encryptImage.getData(), 113)));
         }else {
             System.out.println("文件名有误");
         }

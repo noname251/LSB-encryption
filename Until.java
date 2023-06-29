@@ -43,11 +43,4 @@ public class Until {
                 (byteArray[3] & 0xFF);
         return value;
     }
-    public static Integer[] bytesToInts(byte[] byteArray){
-        Integer[] result = new Integer[byteArray.length];
-        for(int i=0;i<byteArray.length;i++){
-            result[i] = (int)byteArray[i];
-        }
-        return result;
-    }
 }
