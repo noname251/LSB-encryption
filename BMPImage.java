@@ -2,18 +2,22 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 
 public class BMPImage {
+    private int bodyBegin;
     private int width;
     private int height;
     private int bitsPerPixel;
     private byte[] header;
+    private byte[] RBGQuad;
     private byte[] body;
     private byte[] tail;
 
-    public BMPImage(int width, int height, int bitsPerPixel,byte[] header, byte[] data, byte[] body) {
+    public BMPImage(int bodyBegin, int width, int height, int bitsPerPixel,byte[] header, byte[] RBGQuad, byte[] data, byte[] body) {
+        this.bodyBegin = bodyBegin;
         this.width = width;
         this.height = height;
         this.bitsPerPixel = bitsPerPixel;
         this.header = header;
+        this.RBGQuad = RBGQuad;
         this.tail = data;
         this.body = body;
     }
@@ -38,6 +42,10 @@ public class BMPImage {
         return header;
     }
 
+    public byte[] getRBGQuad() {
+        return RBGQuad;
+    }
+
     public byte[] getBody(){
         return body;
     }
@@ -52,10 +60,13 @@ public class BMPImage {
             byte[] header = new byte[54];
             file.read(header);
             // 解析BMP文件头
+            int bodyBegin = byteArrayToInt(header, 10, 4);
             int width = byteArrayToInt(header, 18, 4);
             int height = byteArrayToInt(header, 22, 4);
             //biBitCount 用来判断是灰度图还是全彩图
             int bitsPerPixel = byteArrayToInt(header, 28, 2);
+            byte[] RBGQuad = new byte[bodyBegin-54];
+            file.read(RBGQuad);
 
             // 计算每行像素的字节数， 这样可以处理不仅仅是灰度图和全彩图， 妙啊
             int rowSize = (width * bitsPerPixel + 31) / 32 * 4;
@@ -68,7 +79,7 @@ public class BMPImage {
             int dataLength = (int) (file.getChannel().size() - 54 - imageData.length);
             byte[] body = new byte[dataLength];
             file.read(body);
-            return new BMPImage(width, height, bitsPerPixel, header, imageData,body);
+            return new BMPImage(bodyBegin, width, height, bitsPerPixel, header, RBGQuad, imageData,body);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,6 +92,7 @@ public class BMPImage {
             // 写入文件头部字节数组
             dos.write(image.getHeader());
             // 写入图像数据字节数组
+            dos.write(image.getRBGQuad());
             dos.write(image.getData());
             dos.write(image.getBody());
             System.out.println("BMP文件写入成功");
