@@ -147,5 +147,16 @@ public class EncryptionAndDecryption {
         secretInfo = Arrays.copyOfRange(secretInfo, 0, secretLength);
         return secretInfo;
     }
+    public static byte[] addNoise(byte[] imageData, int noiseAmount) {
+        byte[] noisyImageData = new byte[imageData.length];
+        System.arraycopy(imageData, 0, noisyImageData, 0, imageData.length);
 
+        Random random = new Random();
+        for (int i = 0; i < noiseAmount; i++) {
+            int index = random.nextInt(imageData.length); // 随机选择一个索引位置
+            byte noise = (byte) random.nextInt(256); // 生成一个随机噪声值
+            noisyImageData[index] = (byte) (noisyImageData[index] ^ noise); // 使用异或操作添加噪声
+        }
+        return noisyImageData;
+    }
 }

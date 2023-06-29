@@ -113,12 +113,16 @@ public class LSBHideGUI extends JFrame {
         setLayout(new BorderLayout());
         add(controlPanel, BorderLayout.NORTH);
         add(imagePanel, BorderLayout.CENTER);
+
+        String text = "图片的位图数据不能小于32字节，因为加密信息长度\n需要4字节存储";  // 设置要显示的文本
+        // 在informationArea中显示文本
+        informationArea.setText(text);
     }
 
     private void openImage() {
         reset();
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "bmp"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "bmp"));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
@@ -140,10 +144,17 @@ public class LSBHideGUI extends JFrame {
             path = selectedFile.getParent()+"\\";
             image = BMPImage.readBMP(filePath);
 
+
+
             if (image != null) {
+                if(image.getWidth()*image.getHeight()*image.getBitsPerPixel()/8<32)
+                {
+                    JOptionPane.showMessageDialog(this, "当前图片字节数为"+image.getWidth()*image.getHeight()*image.getBitsPerPixel()/8+"请重新选择图片", "错误", JOptionPane.ERROR_MESSAGE);
+                    reset();
+                }
                 // 处理图像数据
                 imageData = image.getData();
-                String text = "最长加密长度为:" + imageData.length / 8 + "字节";  // 设置要显示的文本
+                String text = "最长加密长度为:" + (imageData.length / 8 - 4 ) + "字节";  // 设置要显示的文本
                 // 在informationArea中显示文本
                 informationArea.setText(text);
             }
@@ -153,8 +164,14 @@ public class LSBHideGUI extends JFrame {
     private void embedInformation() {
         String text = resultArea.getText();  // 获取要嵌入的文本信息
         byte[] secretInfo = text.getBytes();
+        if (secretInfo.length > (imageData.length / 8 - 4 )) {
+            JOptionPane.showMessageDialog(this, "加密信息长度超出限制", "错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
          //加密并获取加密后的data
                 encryptData = EncryptionAndDecryption.encrypt8(secretInfo, imageData);
+                //添加噪声
+                byte[] noisyImageData =EncryptionAndDecryption.addNoise(encryptData,500);
                 if (encryptData.length == 0) {
                     JOptionPane.showMessageDialog(this, "加密失败", "错误", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -163,6 +180,7 @@ public class LSBHideGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "请先读取图片", "错误", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
 
         if (text.isEmpty()) {
             JOptionPane.showMessageDialog(this, "请输入要嵌入的文本信息", "错误", JOptionPane.ERROR_MESSAGE);
@@ -279,6 +297,9 @@ public class LSBHideGUI extends JFrame {
         embeddedImagePanel.removeAll();
         embeddedImagePanel.revalidate();
         embeddedImagePanel.repaint();
+        String text = "图片的位图数据不能小于32字节，因为加密信息长度\n需要4字节存储";  // 设置要显示的文本
+        // 在informationArea中显示文本
+        informationArea.setText(text);
     }
 
     public static void main(String[] args) {

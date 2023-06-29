@@ -2,7 +2,6 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 
 public class BMPImage {
-    private int bodyBegin;
     private int width;
     private int height;
     private int bitsPerPixel;
@@ -11,8 +10,7 @@ public class BMPImage {
     private byte[] body;
     private byte[] tail;
 
-    public BMPImage(int bodyBegin, int width, int height, int bitsPerPixel,byte[] header, byte[] RBGQuad, byte[] data, byte[] body) {
-        this.bodyBegin = bodyBegin;
+    public BMPImage(int width, int height, int bitsPerPixel,byte[] header, byte[] RBGQuad, byte[] data, byte[] body) {
         this.width = width;
         this.height = height;
         this.bitsPerPixel = bitsPerPixel;
@@ -79,7 +77,7 @@ public class BMPImage {
             int dataLength = (int) (file.getChannel().size() - 54 - imageData.length);
             byte[] body = new byte[dataLength];
             file.read(body);
-            return new BMPImage(bodyBegin, width, height, bitsPerPixel, header, RBGQuad, imageData,body);
+            return new BMPImage(width, height, bitsPerPixel, header, RBGQuad, imageData,body);
         } catch (IOException e) {
             e.printStackTrace();
         }
