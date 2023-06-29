@@ -14,7 +14,7 @@ public class main{
             System.out.println("Bits Per Pixel: " + bitsPerPixel);
             // 处理图像数据
             byte[] imageData = image.getData();
-            System.out.println("加密中...\n最长加密长度为:"+imageData.length/8+"字节");
+            System.out.println("加密中...\n最长加密长度为:"+(imageData.length/8-4)+"字节");
             // 加密灰度图
                 //读取加密信息
             Scanner scanner = new Scanner(System.in);
